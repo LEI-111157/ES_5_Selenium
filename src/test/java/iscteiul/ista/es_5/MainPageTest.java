@@ -13,6 +13,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
+/**
+ * Testes de aceitação da página principal da JetBrains
+ * Parte 1-A: Projeto piloto com código de demonstração
+ */
 public class MainPageTest {
 
     private WebDriver driver;
@@ -25,7 +29,7 @@ public class MainPageTest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.get("https://www.jetbrains.com/");
 
-        // fecha o banner de cookies se aparecer
+        // Fechar banner de cookies se aparecer
         closeCookiesIfPresent();
 
         mainPage = new MainPage(driver);
@@ -38,95 +42,127 @@ public class MainPageTest {
         }
     }
 
+    /**
+     * Fecha o banner de cookies se este estiver presente na página.
+     */
     private void closeCookiesIfPresent() {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
+            // Localizar o container do banner de cookies
             WebElement banner = wait.until(
                     ExpectedConditions.visibilityOfElementLocated(
                             By.cssSelector("div.ch2-container")
                     )
             );
 
+            // Clicar no botão de aceitar (primeiro botão dentro do banner)
             WebElement acceptButton = banner.findElement(By.tagName("button"));
             acceptButton.click();
+            System.out.println("✓ Banner de cookies fechado com sucesso");
 
+            // Aguardar que o banner desapareça
             wait.until(ExpectedConditions.invisibilityOf(banner));
 
         } catch (TimeoutException | NoSuchElementException e) {
-            // se não aparecer banner, ignoramos
+            System.out.println("ℹ Banner de cookies não encontrado (pode já estar aceite)");
         }
     }
 
+    /**
+     * Teste 1: Funcionalidade de pesquisa
+     * Valida que é possível pesquisar por "Selenium" através do campo de pesquisa do header
+     */
     @Test
     public void search() throws InterruptedException {
-        // pausas só para cumprir a ficha (observar o comportamento)
-        Thread.sleep(2000); // ver a página inicial (sem banner)
+        System.out.println("\n=== Teste: Pesquisa ===");
 
-        // 1) clicar no botão de pesquisa no header
+        // Pausa para observar a página inicial
+        Thread.sleep(2000);
+
+        System.out.println("→ Clicando no botão de pesquisa...");
         mainPage.searchButton.click();
+        Thread.sleep(1000);
 
-        Thread.sleep(1000); // ver o campo/overlay de pesquisa aberto
-
-        // 2) obter o campo de pesquisa através do elemento focado
+        System.out.println("→ Localizando campo de pesquisa...");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         WebElement searchField = wait.until(d -> {
             WebElement el = d.switchTo().activeElement();
             return "input".equalsIgnoreCase(el.getTagName()) ? el : null;
         });
 
-        // 3) escrever "Selenium"
+        System.out.println("→ Escrevendo 'Selenium' no campo...");
         searchField.clear();
         searchField.sendKeys("Selenium");
+        Thread.sleep(500);
 
-        Thread.sleep(500); // pequena pausa só para veres
-
-        // 4) validar que o campo ficou com o valor correto
+        System.out.println("→ Validando valor do campo...");
         assertEquals("Selenium", searchField.getAttribute("value"));
+        System.out.println("✓ Teste de pesquisa passou!");
     }
 
+    /**
+     * Teste 2: Menu de ferramentas
+     * Valida que o menu Tools é clicável e responde à interação
+     */
     @Test
     public void toolsMenu() throws InterruptedException {
-        // 1) pequena pausa só para veres a página inicial
+        System.out.println("\n=== Teste: Menu Tools ===");
+
+        // Pausa para observar a página inicial
         Thread.sleep(2000);
 
-        // 2) clicar no menu Tools
+        // 1. Clicar no menu Tools
+        System.out.println("→ Clicando no menu Tools...");
         mainPage.toolsMenu.click();
-
-        // 3) pausa para poderes ver o que acontece depois do clique
         Thread.sleep(1000);
 
-        // 4) validação mínima: o botão Tools continua visível/clicável
-        assertTrue(mainPage.toolsMenu.isDisplayed());
+        // 2. Validar que o menu permanece visível após interação
+        System.out.println("→ Validando visibilidade do menu...");
+        assertTrue(mainPage.toolsMenu.isDisplayed(),
+                "O menu Tools deveria estar visível");
+        System.out.println("✓ Teste do menu Tools passou!");
     }
 
+    /**
+     * Teste 3: Navegação para a página de produtos
+     * Valida o fluxo completo de navegação desde a homepage até à página /products
+     */
     @Test
     public void navigationToAllTools() throws InterruptedException {
-        // pequena pausa para veres a homepage
+        System.out.println("\n=== Teste: Navegação para produtos ===");
+
+        // Pausa para observar a homepage
         Thread.sleep(2000);
 
-        // 1) clicar no botão "Developer Tools" (ou semelhante) na página inicial
+        // 1. Clicar no botão "Developer Tools"
+        System.out.println("→ Clicando em Developer Tools...");
         mainPage.seeDeveloperToolsButton.click();
+        Thread.sleep(1000);
 
-        Thread.sleep(1000); // ver a secção intermédia
-
-        // 2) clicar no link visível que leva à página de produtos/tools
+        // 2. Clicar no link que leva à página de produtos
+        System.out.println("→ Procurando link para página de produtos...");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         WebElement productsLink = wait.until(
                 ExpectedConditions.elementToBeClickable(
                         By.cssSelector("a[data-test='suggestion-link']")
                 )
         );
+
+        System.out.println("→ Navegando para /products...");
         productsLink.click();
 
-        // 3) esperar que a página de produtos carregue
+        // 3. Aguardar que a URL contenha "/products"
         wait.until(ExpectedConditions.urlContains("/products"));
+        Thread.sleep(1000);
 
-        Thread.sleep(1000); // observar a página final
-
-        // 4) validação simples sobre a navegação
+        // 4. Validar a navegação
+        System.out.println("→ Validando URL final...");
         String currentUrl = driver.getCurrentUrl();
-        assertTrue(currentUrl.contains("/products"));
+        assertTrue(currentUrl.contains("/products"),
+                "A URL deveria conter '/products'");
+        System.out.println("✓ URL atual: " + currentUrl);
+        System.out.println("✓ Teste de navegação passou!");
     }
 
 }
