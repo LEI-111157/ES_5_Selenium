@@ -7,9 +7,11 @@ import org.openqa.selenium.support.PageFactory;
 
 // page_url = https://www.jetbrains.com/
 public class MainPage {
+    // CORRIGIDO: Adicionado o * antes de [@...
     @FindBy(xpath = "//*[@data-test-marker='Developer Tools']")
     public WebElement seeDeveloperToolsButton;
 
+    // CORRIGIDO: Adicionado o * antes de [@...
     @FindBy(xpath = "//*[@data-test='suggestion-action']")
     public WebElement findYourToolsButton;
 

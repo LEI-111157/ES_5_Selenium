@@ -1,6 +1,8 @@
 package iscteiul.ista.es_5;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -162,4 +164,5 @@ public class MainPageTest {
         System.out.println("✓ URL atual: " + currentUrl);
         System.out.println("✓ Teste de navegação passou!");
     }
+
 }
