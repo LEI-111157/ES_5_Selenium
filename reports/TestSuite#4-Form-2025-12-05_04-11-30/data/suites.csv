@@ -1,0 +1,2 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"Preenche todos os campos, incluindo o Email obrigatório.","4035","testSignupSuccess()","","2025-12-05","passed","2025-12-05","","Form.VaadinFormTest","Form.VaadinFormTest","testSignupSuccess"
